@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${editMode} ? 'Edit Event — FestLog' : 'New Event — FestLog'">Form — FestLog</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #050508; --surface: #0e0e14; --surface-2: #16161f;
+            --border: #252535; --accent: #00ff87; --accent-dim: #00cc6a;
+            --text: #eeeef5; --text-muted: #7070a0; --danger: #ff4d6d;
+        }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+        a { color: var(--accent); text-decoration: none; }
+        .navbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; height: 58px; }
+        .navbar-brand { font-size: 1.25rem; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+        .btn { display: inline-flex; align-items: center; padding: 0.42rem 1rem; border-radius: 8px; border: 1px solid transparent; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: #050508; }
+        .btn-primary:hover { background: var(--accent-dim); color: #050508; }
+        .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+        .btn-outline:hover { background: var(--surface-2); color: var(--text); }
+        .main { max-width: 750px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+        .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; }
+        .form-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .fg { display: flex; flex-direction: column; gap: 0.35rem; }
+        .fg.full { grid-column: 1 / -1; }
+        .fg label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .required::after { content: ' *'; color: var(--danger); }
+        .form-control, .form-select { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.9rem; appearance: none; width: 100%; transition: border-color 0.15s; }
+        .form-control:focus, .form-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,255,135,0.07); }
+        .form-control::placeholder { color: var(--text-muted); }
+        textarea.form-control { resize: vertical; min-height: 100px; }
+        .field-error { color: var(--danger); font-size: 0.78rem; }
+        .section-label { grid-column: 1 / -1; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+        .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/events}">FestLog</a>
+</nav>
+
+<div class="main">
+    <div class="breadcrumb">
+        <a th:href="@{/events}">Event Log</a> /
+        <span th:text="${editMode} ? 'Edit event' : 'New event'"></span>
+    </div>
+
+    <div class="form-card">
+        <h2 class="form-title" th:text="${editMode} ? 'Edit event' : 'Log a new event'"></h2>
+
+        <form th:action="${editMode} ? @{/events/edit/{id}(id=${event.id})} : @{/events/new}"
+              method="post" th:object="${event}">
+
+            <div class="form-grid">
+
+                <div class="fg full">
+                    <label class="required">Event Name</label>
+                    <input class="form-control" type="text" th:field="*{name}" placeholder="e.g. Outlook Festival 2025">
+                    <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <div class="fg full">
+                    <label class="required">Headliner / Main Act</label>
+                    <input class="form-control" type="text" th:field="*{headliner}" placeholder="e.g. Chase & Status">
+                    <span class="field-error" th:if="${#fields.hasErrors('headliner')}" th:errors="*{headliner}"></span>
+                </div>
+
+                <div class="fg">
+                    <label class="required">Event Type</label>
+                    <select class="form-select" th:field="*{eventType}">
+                        <option value="">Select type...</option>
+                        <option th:each="t : ${eventTypes}" th:value="${t}"
+                                th:text="${#strings.replace(t.name(),'_',' ')}"></option>
+                    </select>
+                    <span class="field-error" th:if="${#fields.hasErrors('eventType')}" th:errors="*{eventType}"></span>
+                </div>
+
+                <div class="fg">
+                    <label class="required">Status</label>
+                    <select class="form-select" th:field="*{status}">
+                        <option value="">Select status...</option>
+                        <option th:each="s : ${eventStatuses}" th:value="${s}"
+                                th:text="${#strings.replace(s.name(),'_',' ')}"></option>
+                    </select>
+                    <span class="field-error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></span>
+                </div>
+
+                <div class="fg">
+                    <label>Genre</label>
+                    <input class="form-control" type="text" th:field="*{genre}" placeholder="e.g. Drum & Bass">
+                </div>
+
+                <div class="fg">
+                    <label>Date</label>
+                    <input class="form-control" type="date" th:field="*{eventDate}">
+                </div>
+
+                <div class="section-label">Location</div>
+
+                <div class="fg">
+                    <label>Venue</label>
+                    <input class="form-control" type="text" th:field="*{venue}" placeholder="e.g. Fort Punta Christo">
+                </div>
+
+                <div class="fg">
+                    <label>City</label>
+                    <input class="form-control" type="text" th:field="*{city}" placeholder="e.g. Pula">
+                </div>
+
+                <div class="fg">
+                    <label>Country</label>
+                    <input class="form-control" type="text" th:field="*{country}" placeholder="e.g. Croatia">
+                </div>
+
+                <div class="fg">
+                    <label>Ticket Price (€)</label>
+                    <input class="form-control" type="number" th:field="*{ticketPrice}" min="0" step="0.01" placeholder="0.00">
+                    <span class="field-error" th:if="${#fields.hasErrors('ticketPrice')}" th:errors="*{ticketPrice}"></span>
+                </div>
+
+                <div class="section-label">Personal</div>
+
+                <div class="fg">
+                    <label>My Rating (1–10)</label>
+                    <input class="form-control" type="number" th:field="*{personalRating}" min="1" max="10" placeholder="e.g. 9">
+                    <span class="field-error" th:if="${#fields.hasErrors('personalRating')}" th:errors="*{personalRating}"></span>
+                </div>
+
+                <div class="fg">
+                    <label>Lineup / Event URL</label>
+                    <input class="form-control" type="url" th:field="*{lineupUrl}" placeholder="https://...">
+                </div>
+
+                <div class="fg full">
+                    <label>Notes</label>
+                    <textarea class="form-control" th:field="*{notes}" placeholder="Highlights, memories, who you went with..."></textarea>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/events}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary"
+                        th:text="${editMode} ? 'Save changes' : 'Log event'"></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
