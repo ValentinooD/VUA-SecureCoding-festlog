@@ -101,8 +101,6 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-                      //  .contentSecurityPolicy(csp -> csp
-                      //          .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; frame-src 'self'; form-action 'self';"))
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .maxAgeInSeconds(31536000)
                                 .includeSubDomains(true)
