@@ -13,6 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/auth")
 public class AuthMvcController {
 
+    private static final String TEMPLATE_AUTH_REGISTER = "auth/register";
+
     private final AuthService authService;
 
     public AuthMvcController(AuthService authService) {
@@ -27,7 +29,7 @@ public class AuthMvcController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerRequest", new Dto.RegisterRequest("", "", ""));
-        return "auth/register";
+        return TEMPLATE_AUTH_REGISTER;
     }
 
     @PostMapping("/register")
@@ -38,7 +40,7 @@ public class AuthMvcController {
         Model model
     ) {
         if (result.hasErrors()) {
-            return "auth/register";
+            return TEMPLATE_AUTH_REGISTER;
         }
         try {
             authService.register(request);
@@ -46,7 +48,7 @@ public class AuthMvcController {
             return "redirect:/auth/login";
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "auth/register";
+            return TEMPLATE_AUTH_REGISTER;
         }
     }
 }

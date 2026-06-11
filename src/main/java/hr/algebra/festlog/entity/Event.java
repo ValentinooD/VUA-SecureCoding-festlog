@@ -8,10 +8,13 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "events")
 public class Event {
+
+    private static final String TIMEZONE_EU_ZG = "Europe/Zagreb";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,15 +76,36 @@ public class Event {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public Event() { /* empty default constructor */ }
+
+    public Event(String name, String headliner, String venue, String city, String country, String genre,
+                 EventType type, EventStatus status, LocalDate date, BigDecimal ticket,
+                 Integer rating, String lineupUrl, String notes, User addedBy) {
+        this.setName(name);
+        this.setHeadliner(headliner);
+        this.setVenue(venue);
+        this.setCity(city);
+        this.setCountry(country);
+        this.setGenre(genre);
+        this.setEventType(type);
+        this.setStatus(status);
+        this.setEventDate(date);
+        this.setTicketPrice(ticket);
+        this.setPersonalRating(rating);
+        this.setLineupUrl(lineupUrl);
+        this.setNotes(notes);
+        this.setAddedBy(addedBy);
+    }
+
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now(ZoneId.of(TIMEZONE_EU_ZG));
+        updatedAt = LocalDateTime.now(ZoneId.of(TIMEZONE_EU_ZG));
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(ZoneId.of(TIMEZONE_EU_ZG));
     }
 
     public Long getId()                           { return id; }

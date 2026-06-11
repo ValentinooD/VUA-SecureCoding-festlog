@@ -59,7 +59,7 @@ public class AuthRestController {
 
     @PostMapping("/refresh")
     @Operation(summary = "Obtain a new access token using a refresh token")
-    public ResponseEntity<?> refresh(@Valid @RequestBody Dto.RefreshTokenRequest request) {
+    public ResponseEntity<Dto.TokenResponse> refresh(@Valid @RequestBody Dto.RefreshTokenRequest request) {
         return refreshTokenService.findByToken(request.refreshToken())
             .filter(refreshTokenService::isValid)
             .map(rt -> {

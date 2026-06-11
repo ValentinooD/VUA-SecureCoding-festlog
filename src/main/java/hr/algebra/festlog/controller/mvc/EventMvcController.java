@@ -19,6 +19,15 @@ import java.util.NoSuchElementException;
 @Controller
 @RequestMapping("/events")
 public class EventMvcController {
+    private static final String ATTR_EVENT = "event";
+    private static final String ATTR_EVENT_TYPES = "eventTypes";
+    private static final String ATTR_EVENT_STATUSES = "eventStatuses";
+    private static final String ATTR_EDIT_MODE = "editMode";
+    private static final String ATTR_SUCCESS_MESSAGE = "successMessage";
+
+    private static final String REDIRECT_EVENTS = "redirect:/events";
+
+    private static final String TEMPLATE_FORM = "events/form";
 
     private final EventService eventService;
 
@@ -38,8 +47,8 @@ public class EventMvcController {
         model.addAttribute("events", searching
             ? eventService.search(query, type, status, city)
             : eventService.findAll());
-        model.addAttribute("eventTypes", EventType.values());
-        model.addAttribute("eventStatuses", EventStatus.values());
+        model.addAttribute(ATTR_EVENT_TYPES, EventType.values());
+        model.addAttribute(ATTR_EVENT_STATUSES, EventStatus.values());
         model.addAttribute("query", query);
         model.addAttribute("selectedType", type);
         model.addAttribute("selectedStatus", status);
@@ -50,24 +59,24 @@ public class EventMvcController {
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         try {
-            model.addAttribute("event", eventService.findById(id));
+            model.addAttribute(ATTR_EVENT, eventService.findById(id));
             return "events/detail";
-        } catch (NoSuchElementException e) {
-            return "redirect:/events";
+        } catch (NoSuchElementException _) {
+            return REDIRECT_EVENTS;
         }
     }
 
     @GetMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
     public String newForm(Model model) {
-        model.addAttribute("event", new EventDto(
+        model.addAttribute(ATTR_EVENT, new EventDto(
             null, "", "", "", "", "", "", null, null,
             null, null, null, "", "", null, null, null
         ));
-        model.addAttribute("eventTypes", EventType.values());
-        model.addAttribute("eventStatuses", EventStatus.values());
-        model.addAttribute("editMode", false);
-        return "events/form";
+        model.addAttribute(ATTR_EVENT_TYPES, EventType.values());
+        model.addAttribute(ATTR_EVENT_STATUSES, EventStatus.values());
+        model.addAttribute(ATTR_EDIT_MODE, false);
+        return TEMPLATE_FORM;
     }
 
     @PostMapping("/new")
@@ -80,27 +89,27 @@ public class EventMvcController {
         RedirectAttributes redirectAttributes
     ) {
         if (result.hasErrors()) {
-            model.addAttribute("eventTypes", EventType.values());
-            model.addAttribute("eventStatuses", EventStatus.values());
-            model.addAttribute("editMode", false);
-            return "events/form";
+            model.addAttribute(ATTR_EVENT_TYPES, EventType.values());
+            model.addAttribute(ATTR_EVENT_STATUSES, EventStatus.values());
+            model.addAttribute(ATTR_EDIT_MODE, false);
+            return TEMPLATE_FORM;
         }
         eventService.create(dto, currentUser);
-        redirectAttributes.addFlashAttribute("successMessage", "Event added to your log.");
-        return "redirect:/events";
+        redirectAttributes.addFlashAttribute(ATTR_SUCCESS_MESSAGE, "Event added to your log.");
+        return REDIRECT_EVENTS;
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String editForm(@PathVariable Long id, Model model) {
         try {
-            model.addAttribute("event", eventService.findById(id));
-            model.addAttribute("eventTypes", EventType.values());
-            model.addAttribute("eventStatuses", EventStatus.values());
-            model.addAttribute("editMode", true);
-            return "events/form";
-        } catch (NoSuchElementException e) {
-            return "redirect:/events";
+            model.addAttribute(ATTR_EVENT, eventService.findById(id));
+            model.addAttribute(ATTR_EVENT_TYPES, EventType.values());
+            model.addAttribute(ATTR_EVENT_STATUSES, EventStatus.values());
+            model.addAttribute(ATTR_EDIT_MODE, true);
+            return TEMPLATE_FORM;
+        } catch (NoSuchElementException _) {
+            return REDIRECT_EVENTS;
         }
     }
 
@@ -114,21 +123,21 @@ public class EventMvcController {
         RedirectAttributes redirectAttributes
     ) {
         if (result.hasErrors()) {
-            model.addAttribute("eventTypes", EventType.values());
-            model.addAttribute("eventStatuses", EventStatus.values());
-            model.addAttribute("editMode", true);
-            return "events/form";
+            model.addAttribute(ATTR_EVENT_TYPES, EventType.values());
+            model.addAttribute(ATTR_EVENT_STATUSES, EventStatus.values());
+            model.addAttribute(ATTR_EDIT_MODE, true);
+            return TEMPLATE_FORM;
         }
         eventService.update(id, dto);
-        redirectAttributes.addFlashAttribute("successMessage", "Event updated.");
-        return "redirect:/events";
+        redirectAttributes.addFlashAttribute(ATTR_SUCCESS_MESSAGE, "Event updated.");
+        return REDIRECT_EVENTS;
     }
 
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         eventService.delete(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Event removed.");
-        return "redirect:/events";
+        redirectAttributes.addFlashAttribute(ATTR_SUCCESS_MESSAGE, "Event removed.");
+        return REDIRECT_EVENTS;
     }
 }

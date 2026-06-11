@@ -2,7 +2,6 @@ package hr.algebra.festlog.config;
 
 import hr.algebra.festlog.security.JwtAuthFilter;
 import jakarta.servlet.SessionTrackingMode;
-import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -31,6 +30,9 @@ import java.util.Set;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final String STR_ADMIN = "ADMIN";
+    private static final String STR_API_EVENTS = "/api/events/**";
+
     private final JwtAuthFilter jwtAuthFilter;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
@@ -39,7 +41,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) {
         http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -47,10 +49,10 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/events/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/events/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/events/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/events/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, STR_API_EVENTS).hasAnyRole("USER", STR_ADMIN)
+                        .requestMatchers(HttpMethod.POST, STR_API_EVENTS).hasRole(STR_ADMIN)
+                        .requestMatchers(HttpMethod.PUT, STR_API_EVENTS).hasRole(STR_ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, STR_API_EVENTS).hasRole(STR_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -67,7 +69,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain mvcFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain mvcFilterChain(HttpSecurity http) {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -77,8 +79,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/events/new", "/events/edit/**", "/events/delete/**"
-                        ).hasRole("ADMIN")
-                        .requestMatchers("/events/**").hasAnyRole("USER", "ADMIN")
+                        ).hasRole(STR_ADMIN)
+                        .requestMatchers("/events/**").hasAnyRole("USER", STR_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -116,23 +118,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {
         return config.getAuthenticationManager();
     }
 
     @Bean
     public ServletContextInitializer servletContextInitializer() {
-        return servletContext -> {
-            servletContext.setSessionTrackingModes(
-                    Collections.singleton(SessionTrackingMode.COOKIE)
-            );
-        };
+        return servletContext -> servletContext.setSessionTrackingModes(
+                Collections.singleton(SessionTrackingMode.COOKIE)
+        );
     }
 
     @Bean
     public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerFactoryCustomizer() {
-        return factory -> factory.addInitializers(servletContext -> {
-            servletContext.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE));
-        });
+        return factory -> factory.addInitializers(servletContext -> servletContext.setSessionTrackingModes(Set.of(SessionTrackingMode.COOKIE)));
     }
 }

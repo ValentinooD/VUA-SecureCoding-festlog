@@ -41,7 +41,7 @@ public class EventRestController {
     public ResponseEntity<EventDto> getById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(eventService.findById(id));
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -76,7 +76,7 @@ public class EventRestController {
     ) {
         try {
             return ResponseEntity.ok(eventService.update(id, dto));
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -88,7 +88,7 @@ public class EventRestController {
         try {
             eventService.delete(id);
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
         }
     }

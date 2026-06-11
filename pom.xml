@@ -16,31 +16,35 @@
     <artifactId>festlog</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <n>FestLog</n>
+    <name>FestLog</name>
     <description>Music festival and concert experience tracker</description>
 
     <properties>
         <java.version>25</java.version>
-        <springdoc.version>3.0.0</springdoc.version>
-        <java-jwt.version>4.4.0</java-jwt.version>
+        <springdoc.version>3.0.3</springdoc.version>
+        <java-jwt.version>4.5.2</java-jwt.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>4.0.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>4.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <version>4.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>4.0.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,6 +53,7 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+            <version>3.1.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -69,11 +74,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <version>4.0.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+            <version>7.0.6</version>
         </dependency>
     </dependencies>
 

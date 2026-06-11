@@ -14,9 +14,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 
 @Component
 public class DataInitializer implements ApplicationRunner {
+
+    private static final String STR_CROATIA = "Croatia";
 
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
@@ -39,94 +42,75 @@ public class DataInitializer implements ApplicationRunner {
         User admin = new User();
         admin.setUsername("admin");
         admin.setEmail("admin@festlog.hr");
-        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setPassword(passwordEncoder.encode(System.getenv("DEFAULT_ADMIN_PASSWD")));
         admin.setRole(Role.ADMIN);
         admin = userRepository.save(admin);
 
         User user = new User();
         user.setUsername("user");
         user.setEmail("user@festlog.hr");
-        user.setPassword(passwordEncoder.encode("user123"));
+        user.setPassword(passwordEncoder.encode(System.getenv("DEFAULT_USER_PASSWD")));
         user.setRole(Role.USER);
         userRepository.save(user);
 
-        createEvent("Outlook Festival 2025", "Chase & Status",
-            "Fort Punta Christo", "Pula", "Croatia", "Drum & Bass",
+        createEvent(new Event("Outlook Festival 2025", "Chase & Status",
+            "Fort Punta Christo", "Pula", STR_CROATIA, "Drum & Bass",
             EventType.FESTIVAL, EventStatus.TICKETS_SECURED,
-            LocalDate.of(2025, 9, 3), new BigDecimal("89.00"), null,
+            LocalDate.of(2025, Month.SEPTEMBER, 3), new BigDecimal("89.00"), null,
             "https://www.outlookfestival.com",
-            "Tickets secured for the full 5-day pass. Last year was insane.", admin);
+            "Tickets secured for the full 5-day pass. Last year was insane.", admin));
 
-        createEvent("Glastonbury 2024", "Coldplay",
+        createEvent(new Event("Glastonbury 2024", "Coldplay",
             "Worthy Farm", "Pilton", "United Kingdom", "Mixed",
             EventType.FESTIVAL, EventStatus.ATTENDED,
-            LocalDate.of(2024, 6, 26), new BigDecimal("340.00"), 10,
+            LocalDate.of(2024, Month.JUNE, 26), new BigDecimal("340.00"), 10,
             "https://www.glastonburyfestivals.co.uk",
-            "Absolutely legendary. Beyoncé surprise set on the Park Stage. Once in a lifetime.", admin);
+            "Absolutely legendary. Beyoncé surprise set on the Park Stage. Once in a lifetime.", admin));
 
-        createEvent("Boiler Room Zagreb", "Tijana T",
-            "Tvornica Kulture", "Zagreb", "Croatia", "Techno",
+        createEvent(new Event("Boiler Room Zagreb", "Tijana T",
+            "Tvornica Kulture", "Zagreb", STR_CROATIA, "Techno",
             EventType.CLUB_NIGHT, EventStatus.ATTENDED,
-            LocalDate.of(2024, 11, 15), new BigDecimal("25.00"), 9,
+            LocalDate.of(2024, Month.NOVEMBER, 15), new BigDecimal("25.00"), 9,
             "https://boilerroom.tv",
-            "Best Boiler Room I've been to. Crowd energy was unreal.", admin);
+            "Best Boiler Room I've been to. Crowd energy was unreal.", admin));
 
-        createEvent("Ultra Europe 2025", "Martin Garrix",
-            "Poljud Stadium", "Split", "Croatia", "EDM",
+        createEvent(new Event("Ultra Europe 2025", "Martin Garrix",
+            "Poljud Stadium", "Split", STR_CROATIA, "EDM",
             EventType.FESTIVAL, EventStatus.WISHLIST,
-            LocalDate.of(2025, 7, 11), new BigDecimal("99.00"), null,
+            LocalDate.of(2025, Month.JULY, 11), new BigDecimal("99.00"), null,
             "https://ultraeurope.com",
-            "Need to decide before early bird ends. Lineup looks strong.", admin);
+            "Need to decide before early bird ends. Lineup looks strong.", admin));
 
-        createEvent("Primavera Sound 2024", "Lana Del Rey",
+        createEvent(new Event("Primavera Sound 2024", "Lana Del Rey",
             "Parc del Fòrum", "Barcelona", "Spain", "Indie / Alternative",
             EventType.FESTIVAL, EventStatus.MISSED,
-            LocalDate.of(2024, 5, 29), new BigDecimal("220.00"), null,
+            LocalDate.of(2024, Month.MAY, 29), new BigDecimal("220.00"), null,
             "https://www.primaverasound.com",
-            "Couldn't get flights in time. Devastated about missing Lana.", admin);
+            "Couldn't get flights in time. Devastated about missing Lana.", admin));
 
-        createEvent("Dour Festival 2025", "Skrillex",
+        createEvent(new Event("Dour Festival 2025", "Skrillex",
             "La Plaine de La Machine à Feu", "Dour", "Belgium", "Electronic",
             EventType.FESTIVAL, EventStatus.WISHLIST,
-            LocalDate.of(2025, 7, 17), new BigDecimal("130.00"), null,
+            LocalDate.of(2025, Month.JULY, 17), new BigDecimal("130.00"), null,
             "https://dourfestival.eu",
-            "Underrated gem. Considering going with a group.", admin);
+            "Underrated gem. Considering going with a group.", admin));
 
-        createEvent("Massive Attack Live", "Massive Attack",
+        createEvent(new Event("Massive Attack Live", "Massive Attack",
             "Fabrique", "Milan", "Italy", "Trip Hop",
             EventType.CONCERT, EventStatus.ATTENDED,
-            LocalDate.of(2023, 10, 20), new BigDecimal("65.00"), 8,
+            LocalDate.of(2023, Month.OCTOBER, 20), new BigDecimal("65.00"), 8,
             "https://www.massiveattack.com",
-            "Incredible visuals and production. Set was mostly Mezzanine era.", admin);
+            "Incredible visuals and production. Set was mostly Mezzanine era.", admin));
 
-        createEvent("Sonus Festival 2025", "Peggy Gou",
-            "Zrće Beach", "Novalja", "Croatia", "House / Techno",
+        createEvent(new Event("Sonus Festival 2025", "Peggy Gou",
+            "Zrće Beach", "Novalja", STR_CROATIA, "House / Techno",
             EventType.OPEN_AIR, EventStatus.TICKETS_SECURED,
-            LocalDate.of(2025, 8, 30), new BigDecimal("110.00"), null,
+            LocalDate.of(2025, Month.AUGUST, 30), new BigDecimal("110.00"), null,
             "https://sonusfestival.com",
-            "Zrće sunrise sets are unmatched. Can't wait.", admin);
+            "Zrće sunrise sets are unmatched. Can't wait.", admin));
     }
 
-    private void createEvent(
-        String name, String headliner, String venue, String city, String country, String genre,
-        EventType type, EventStatus status, LocalDate date, BigDecimal ticket,
-        Integer rating, String lineupUrl, String notes, User addedBy
-    ) {
-        Event event = new Event();
-        event.setName(name);
-        event.setHeadliner(headliner);
-        event.setVenue(venue);
-        event.setCity(city);
-        event.setCountry(country);
-        event.setGenre(genre);
-        event.setEventType(type);
-        event.setStatus(status);
-        event.setEventDate(date);
-        event.setTicketPrice(ticket);
-        event.setPersonalRating(rating);
-        event.setLineupUrl(lineupUrl);
-        event.setNotes(notes);
-        event.setAddedBy(addedBy);
+    private void createEvent(Event event) {
         eventRepository.save(event);
     }
 }

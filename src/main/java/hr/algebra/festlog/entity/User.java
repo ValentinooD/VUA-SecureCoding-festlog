@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class User implements UserDetails {
 
     @PrePersist
     protected void onCreate() {
-        registeredAt = LocalDateTime.now();
+        registeredAt = LocalDateTime.now(ZoneId.of("Europe/Zagreb"));
     }
 
     @Override
