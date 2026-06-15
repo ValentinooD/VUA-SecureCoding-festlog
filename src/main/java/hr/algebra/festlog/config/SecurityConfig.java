@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, STR_API_EVENTS).hasRole(STR_ADMIN)
                         .requestMatchers(HttpMethod.PUT, STR_API_EVENTS).hasRole(STR_ADMIN)
                         .requestMatchers(HttpMethod.DELETE, STR_API_EVENTS).hasRole(STR_ADMIN)
-                        .requestMatchers("/api/vuln/attack").permitAll()
+                        .requestMatchers("/api/vuln/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
